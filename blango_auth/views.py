@@ -7,4 +7,4 @@ def profile(request):
     return render(request, "blango_auth/profile.html")
 
 def login(request):
-    return render(request, "django_registration/login.html")
+    return render(request, "registration/login.html")
