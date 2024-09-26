@@ -14,9 +14,9 @@
             <div class="d-flex">
                 {% if request.user.is_active %}
                     <a class="nav-link" href="{% url "profile" %}">Profile</a>
-                    <a class="nav-link" href="{% url "logout" %}">Log Out</a>
+                    {% comment %} <a class="nav-link" href="{% url "logout" %}">Log Out</a> {% endcomment %}
                 {% else %}
-                    <a class="nav-link" href="{% url "django_registration_register" %}">Register</a>
+                    {% comment %} <a class="nav-link" href="{% url "django_registration_register" %}">Register</a> {% endcomment %}
                     <a class="nav-link" href="{% url "login" %}">Log In</a>
                 {% endif %}
             </div>
