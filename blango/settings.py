@@ -52,6 +52,7 @@ class Dev(Configuration):
         'allauth.account',
         'allauth.socialaccount',
         'allauth.socialaccount.providers.google',
+        'rest_framework',
         
     ]
     ACCOUNT_USER_MODEL_USERNAME_FIELD = None
