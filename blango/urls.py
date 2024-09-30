@@ -1,12 +1,22 @@
 from django.contrib import admin
 from django.urls import path, include
 import blog.views
+import blog.api.views
 import debug_toolbar
 from django.conf import settings
 from django_registration.backends.activation.views import RegistrationView
 import blango_auth.views
 
 from blango_auth.forms import BlangoRegistrationForm
+from blog.api.views import TagViewSet, PostViewSet
+
+
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register("tags", TagViewSet)
+router.register("posts", PostViewSet)
+
 urlpatterns = [
     # recommended to change the url name of admin to something else for enhanced security
     path('profile/', blog.views.index),
@@ -24,7 +34,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", blog.views.index),
     path("post/<slug>/", blog.views.post_detail, name="blog-post-detail"),
-    path("api/v1/", include("blog.api_urls")),
+    path("api/v1/", include("blog.api.urls")),
+    path("", include(router.urls)),
     
 ]
 if settings.DEBUG:
