@@ -5,9 +5,20 @@ from blog.api.permissions import AuthorModifyOrReadOnly, IsAdminUserForObject
 from blango_auth.models import User
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers, vary_on_cookie
 
+from rest_framework.exceptions import PermissionDenied
 
 class TagViewSet(viewsets.ModelViewSet):
+    @method_decorator(cache_page(300))
+    def list(self, *args, **kwargs):
+        return super(TagViewSet, self).list(*args, **kwargs)
+
+    @method_decorator(cache_page(300))
+    def retrieve(self, *args, **kwargs):
+        return super(TagViewSet, self).retrieve(*args, **kwargs)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
@@ -20,8 +31,23 @@ class TagViewSet(viewsets.ModelViewSet):
         return Response(post_serializer.data)
     
 class PostViewSet(viewsets.ModelViewSet):
+    @method_decorator(cache_page(300))
+    @method_decorator(vary_on_headers("Authorization"))
+    @method_decorator(vary_on_cookie)
+    @action(methods=["get"], detail=False, name="Posts by the logged in user")
+    def mine(self, request):
+        if request.user.is_anonymous:
+            raise PermissionDenied("You must be logged in to see which Posts are yours")
+        posts = self.get_queryset().filter(author=request.user)
+        serializer = PostSerializer(posts, many=True, context={"request": request})
+        return Response(serializer.data)
+    
     permission_classes = [AuthorModifyOrReadOnly | IsAdminUserForObject]
     queryset = Post.objects.all()
+    
+    @method_decorator(cache_page(120))
+    def list(self, *args, **kwargs):
+        return super(PostViewSet, self).list(*args, **kwargs)
 
     def get_serializer_class(self):
         if self.action in ("list", "create"):
@@ -29,6 +55,9 @@ class PostViewSet(viewsets.ModelViewSet):
         return PostDetailSerializer
     
 class UserDetail(generics.RetrieveAPIView):
+    @method_decorator(cache_page(300))
+    def get(self, *args, **kwargs):
+        return super(UserDetail, self).get(*args, *kwargs)
     lookup_field="email"
     queryset=User.objects.all()
     serializer_class = UserSerializer
