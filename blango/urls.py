@@ -12,6 +12,7 @@ from blog.api.views import TagViewSet, PostViewSet
 
 
 from rest_framework.routers import DefaultRouter
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register("tags", TagViewSet)
@@ -41,4 +42,4 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += [
         path("__debug__/", include(debug_toolbar.urls)),
-    ]
+    ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

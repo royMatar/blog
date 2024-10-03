@@ -55,6 +55,7 @@ class Dev(Configuration):
         'allauth.socialaccount.providers.google',
         'rest_framework',
         'rest_framework.authtoken',
+        'versatileimagefield',
         
     ]
     ACCOUNT_USER_MODEL_USERNAME_FIELD = None
@@ -107,7 +108,8 @@ class Dev(Configuration):
         "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     }
     
-    
+    MEDIA_ROOT = BASE_DIR / "media"
+    MEDIA_URL = "/media/"
     
 
 
